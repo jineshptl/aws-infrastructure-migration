@@ -176,3 +176,13 @@ ansible-playbook playbooks/monitoring.yml
 ```
 
 Takes about 10 minutes. Tear down with `terraform destroy` when done.
+
+## Failure tests
+
+Broke things on purpose, then found and fixed them. Notes in [confluence/](confluence/).
+
+- [Nginx down](confluence/nginx-down.md)
+- [Security group rule removed](confluence/security-group-broken.md)
+- [Node Exporter down](confluence/node-exporter-down.md)
+
+![Alert firing](docs/screenshots/alert-firing.png)
