@@ -124,3 +124,13 @@ cd ansible
 ansible-playbook playbooks/setup.yml
 ansible-playbook playbooks/docker.yml
 ```
+
+## Nginx
+
+Runs in Docker on app01, port 8080. Playbook: [ansible/playbooks/nginx.yml](ansible/playbooks/nginx.yml)
+
+```bash
+cd ansible
+ansible-playbook playbooks/nginx.yml
+curl http://$(cd ../terraform && terraform output -raw app01_ip):8080
+```
