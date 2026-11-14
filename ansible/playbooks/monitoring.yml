@@ -12,19 +12,21 @@
 
     - name: Generate Prometheus config from inventory
       ansible.builtin.template:
-        src: prometheus.yml.j2
+        src: templates/prometheus.yml.j2
         dest: /opt/monitoring/prometheus.yml
         mode: "0644"
       notify: Restart Prometheus
 
-    - name: Copy Compose file and Grafana datasource
+    - name: Copy Compose file, alert rules and Grafana datasource
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/../../monitoring/{{ item }}"
         dest: /opt/monitoring/{{ item }}
         mode: "0644"
       loop:
         - docker-compose.yml
+        - alerts.yml
         - grafana-datasource.yml
+      notify: Restart Prometheus
 
     - name: Start Prometheus and Grafana
       community.docker.docker_compose_v2:
