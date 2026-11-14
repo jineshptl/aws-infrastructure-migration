@@ -81,3 +81,23 @@ app01 (t3.micro) and monitor01 (t3.small), Ubuntu 24.04. Config: [terraform/ec2.
 terraform apply
 ssh ubuntu@$(terraform output -raw app01_ip)
 ```
+
+## Tear down and start again
+
+Destroy everything when you're done to stop paying:
+
+```bash
+cd terraform
+terraform destroy
+```
+
+To start again later:
+
+```bash
+aws login
+echo "admin_cidr = \"$(curl -s https://checkip.amazonaws.com)/32\"" > terraform.tfvars
+terraform apply
+terraform output
+```
+
+Servers get new IPs every time.
