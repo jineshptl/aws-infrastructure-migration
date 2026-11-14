@@ -8,6 +8,7 @@ hostnames:
   - tag:Name
 compose:
   ansible_host: public_ip_address
+  ansible_user: "'ubuntu'"
 groups:
   app: ec2_tags.Role == 'app'
   monitoring: ec2_tags.Role == 'monitoring'
