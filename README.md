@@ -72,3 +72,12 @@ Lets the servers use SSM and CloudWatch without storing access keys. Config: [te
 ```bash
 terraform apply
 ```
+
+## EC2
+
+app01 (t3.micro) and monitor01 (t3.small), Ubuntu 24.04. Config: [terraform/ec2.tf](terraform/ec2.tf)
+
+```bash
+terraform apply
+ssh ubuntu@$(terraform output -raw app01_ip)
+```
