@@ -64,3 +64,11 @@ terraform apply
 ```
 
 If your IP changes, run both commands again.
+
+## IAM role
+
+Lets the servers use SSM and CloudWatch without storing access keys. Config: [terraform/iam.tf](terraform/iam.tf)
+
+```bash
+terraform apply
+```
