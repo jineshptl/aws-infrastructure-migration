@@ -166,6 +166,7 @@ unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_CREDENTIAL_E
 eval "$(aws configure export-credentials --format env)"
 
 cd terraform
+echo "admin_cidr = \"$(curl -s https://checkip.amazonaws.com)/32\"" > terraform.tfvars
 terraform apply
 sleep 60
 
