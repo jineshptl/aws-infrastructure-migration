@@ -6,10 +6,18 @@ Architecture: [docs/architecture.md](docs/architecture.md)
 
 ## Requirements
 
-- AWS account and AWS CLI
-- Terraform
-- Ansible
-- SSH key at `~/.ssh/id_ed25519`
+Check these on your local machine first:
+
+```bash
+aws --version
+terraform --version
+ansible --version
+ls ~/.ssh/id_ed25519.pub
+```
+
+- AWS CLI: `brew install awscli`
+- Terraform and Ansible: see [setup in the on-prem lab](https://github.com/jineshptl/linux-infrastructure-automation-lab#4-automation-tools-macos)
+- SSH key: if missing, create one as in [SSH key login](https://github.com/jineshptl/linux-infrastructure-automation-lab#8-ssh-key-login) (only the `ssh-keygen` command)
 
 ## Setup
 
