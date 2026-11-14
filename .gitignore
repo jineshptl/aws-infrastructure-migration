@@ -1,0 +1,11 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+*.pem
+*.key
+id_*
+*.pub
+*.retry
+.DS_Store
