@@ -148,3 +148,10 @@ ansible-playbook playbooks/monitoring.yml
 
 - Prometheus: `http://<monitor01_ip>:9090/targets`
 - Grafana: `http://<monitor01_ip>:3000` (admin / admin first login), import dashboard `1860`
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Prometheus targets](docs/screenshots/prometheus-targets.png) | ![Grafana](docs/screenshots/grafana-dashboard.png) |
+| ![Nginx](docs/screenshots/nginx.png) | ![Ansible inventory](docs/screenshots/ansible-inventory.png) |
