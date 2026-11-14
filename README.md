@@ -114,3 +114,13 @@ ansible all -m ping
 ```
 
 The `eval` line passes your `aws login` session to Ansible. Run it again in each new terminal.
+
+## Server setup and Docker
+
+Same playbooks as the on-prem lab. No `-K` needed on AWS. Playbooks: [ansible/playbooks](ansible/playbooks)
+
+```bash
+cd ansible
+ansible-playbook playbooks/setup.yml
+ansible-playbook playbooks/docker.yml
+```
