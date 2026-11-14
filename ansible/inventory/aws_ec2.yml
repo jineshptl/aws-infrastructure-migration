@@ -1,0 +1,14 @@
+plugin: amazon.aws.aws_ec2
+regions:
+  - us-east-1
+filters:
+  tag:Project: aws-infrastructure-migration
+  instance-state-name: running
+hostnames:
+  - tag:Name
+compose:
+  ansible_host: public_ip_address
+groups:
+  app: ec2_tags.Role == 'app'
+  monitoring: ec2_tags.Role == 'monitoring'
+use_deprecated_tags: false
