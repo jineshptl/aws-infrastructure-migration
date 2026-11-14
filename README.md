@@ -101,3 +101,16 @@ terraform output
 ```
 
 Servers get new IPs every time.
+
+## Ansible inventory
+
+Ansible finds the servers by their AWS tags, so no IPs are hardcoded. Config: [ansible/inventory/aws_ec2.yml](ansible/inventory/aws_ec2.yml)
+
+```bash
+cd ansible
+eval "$(aws configure export-credentials --format env)"
+ansible-inventory --graph
+ansible all -m ping
+```
+
+The `eval` line passes your `aws login` session to Ansible. Run it again in each new terminal.
