@@ -155,3 +155,24 @@ ansible-playbook playbooks/monitoring.yml
 |---|---|
 | ![Prometheus targets](docs/screenshots/prometheus-targets.png) | ![Grafana](docs/screenshots/grafana-dashboard.png) |
 | ![Nginx](docs/screenshots/nginx.png) | ![Ansible inventory](docs/screenshots/ansible-inventory.png) |
+
+## Rebuild from scratch
+
+```bash
+aws login
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_CREDENTIAL_EXPIRATION
+eval "$(aws configure export-credentials --format env)"
+
+cd terraform
+terraform apply
+sleep 60
+
+cd ../ansible
+ansible-playbook playbooks/setup.yml
+ansible-playbook playbooks/docker.yml
+ansible-playbook playbooks/nginx.yml
+ansible-playbook playbooks/node_exporter.yml
+ansible-playbook playbooks/monitoring.yml
+```
+
+Takes about 10 minutes. Tear down with `terraform destroy` when done.
