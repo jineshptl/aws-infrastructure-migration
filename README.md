@@ -108,6 +108,7 @@ Ansible finds the servers by their AWS tags, so no IPs are hardcoded. Config: [a
 
 ```bash
 cd ansible
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_CREDENTIAL_EXPIRATION
 eval "$(aws configure export-credentials --format env)"
 ansible-inventory --graph
 ansible all -m ping
@@ -134,3 +135,16 @@ cd ansible
 ansible-playbook playbooks/nginx.yml
 curl http://$(cd ../terraform && terraform output -raw app01_ip):8080
 ```
+
+## Prometheus and Grafana
+
+Node Exporter on both servers, Prometheus and Grafana in Docker on monitor01. The Prometheus config is built from the inventory ([template](ansible/playbooks/templates/prometheus.yml.j2)). Files: [monitoring/](monitoring/), [ansible/playbooks/monitoring.yml](ansible/playbooks/monitoring.yml)
+
+```bash
+cd ansible
+ansible-playbook playbooks/node_exporter.yml
+ansible-playbook playbooks/monitoring.yml
+```
+
+- Prometheus: `http://<monitor01_ip>:9090/targets`
+- Grafana: `http://<monitor01_ip>:3000` (admin / admin first login), import dashboard `1860`
