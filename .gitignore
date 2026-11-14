@@ -9,3 +9,4 @@ id_*
 *.pub
 *.retry
 .DS_Store
+aws-notes.txt
