@@ -1,5 +1,7 @@
 # AWS Infrastructure Migration
 
+![CI](https://github.com/jineshptl/aws-infrastructure-migration/actions/workflows/ci.yml/badge.svg)
+
 Cloud version of my [Linux Infrastructure Automation Lab](https://github.com/jineshptl/linux-infrastructure-automation-lab). Same two servers, now on AWS with Terraform and Ansible.
 
 Architecture: [docs/architecture.md](docs/architecture.md)
@@ -186,3 +188,7 @@ Broke things on purpose, then found and fixed them. Notes in [confluence/](confl
 - [Node Exporter down](confluence/node-exporter-down.md)
 
 ![Alert firing](docs/screenshots/alert-firing.png)
+
+## CI
+
+Every push runs `terraform fmt`, `terraform validate` and `ansible-lint`. Workflow: [.github/workflows/ci.yml](.github/workflows/ci.yml)
