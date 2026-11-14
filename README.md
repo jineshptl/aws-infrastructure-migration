@@ -53,3 +53,14 @@ terraform init
 terraform plan
 terraform apply
 ```
+
+## Security groups
+
+SSH and web ports open to your IP only. Config: [terraform/security.tf](terraform/security.tf)
+
+```bash
+echo "admin_cidr = \"$(curl -s https://checkip.amazonaws.com)/32\"" > terraform.tfvars
+terraform apply
+```
+
+If your IP changes, run both commands again.
