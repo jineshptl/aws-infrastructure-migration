@@ -42,3 +42,14 @@ Set this up before creating anything. Servers cost about $1/day while running.
 Billing and Cost Management → Budgets → Create budget → **Monthly cost budget** template, `$10`, your email.
 
 Verify the email AWS sends, otherwise no alerts are sent.
+
+## VPC
+
+VPC, public subnet, internet gateway and route table. Config: [terraform/vpc.tf](terraform/vpc.tf)
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
