@@ -25,3 +25,12 @@ ls ~/.ssh/id_ed25519.pub
 git clone https://github.com/jineshptl/aws-infrastructure-migration.git
 cd aws-infrastructure-migration
 ```
+
+## AWS login
+
+Use an IAM user with MFA, not root.
+
+```bash
+aws login
+aws sts get-caller-identity
+```
