@@ -8,23 +8,26 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir: [terraform, kubernetes/terraform]
     defaults:
       run:
-        working-directory: terraform
+        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v5
       - uses: hashicorp/setup-terraform@v4
-      - name: Dummy SSH key for validate
-        run: mkdir -p ~/.ssh && ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519 -q
+      - name: Dummy SSH keys for validate
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -q
+          ssh-keygen -t ed25519 -f ~/.ssh/k8s-lab -N "" -q
       - run: terraform fmt -check -recursive
       - run: terraform init -backend=false
       - run: terraform validate
 
   ansible:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ansible
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -32,4 +35,25 @@ jobs:
           python-version: "3.12"
       - run: pip install ansible-lint
       - run: ansible-galaxy collection install amazon.aws community.docker
-      - run: ansible-lint playbooks/
+      - name: Lint AWS lab
+        working-directory: ansible
+        run: ansible-lint playbooks/
+      - name: Lint Kubernetes lab
+        working-directory: kubernetes/ansible
+        run: ansible-lint playbooks/
+
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: shellcheck --severity=warning scripts/*.sh
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
