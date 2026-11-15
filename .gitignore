@@ -10,3 +10,4 @@ id_*
 *.retry
 .DS_Store
 aws-notes.txt
+private-notes.md
