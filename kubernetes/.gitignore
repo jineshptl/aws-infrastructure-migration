@@ -1,0 +1,6 @@
+*.tfstate*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.pem
+aws-notes.txt
