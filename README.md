@@ -192,13 +192,12 @@ Broke things on purpose, then found and fixed them. Notes in [confluence/](confl
 
 ## CI
 
-Every push runs `terraform fmt`, `terraform validate` and `ansible-lint`. Workflow: [.github/workflows/ci.yml](.github/workflows/ci.yml)
+Every push and PR runs: terraform fmt and validate (both stacks), ansible-lint (both projects), shellcheck on `scripts/`, and a gitleaks secret scan over the full history. Main only changes if all pass. Workflow: [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
 ## Kubernetes
 
 2-node Kubernetes cluster (kubeadm, v1.35) on AWS, built the CKA way. Terraform makes the servers, Ansible prepares them, `kubeadm init` and `join` by hand. Steps: [kubernetes/README.md](kubernetes/README.md)
 
-CI also checks the Kubernetes lab, lints `scripts/` with shellcheck, and scans the whole history for leaked secrets with gitleaks.
 ## Cost check
 
 One command to see if anything in AWS is still costing money, in every region: servers, disks, Elastic IPs, NAT gateways, load balancers, databases, S3. Script: [scripts/aws-check.sh](scripts/aws-check.sh)
