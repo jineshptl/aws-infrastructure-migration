@@ -56,7 +56,7 @@
 
     - name: Install kubelet, kubeadm, kubectl
       ansible.builtin.apt:
-        name: [kubelet, kubeadm, kubectl]
+        name: [kubelet, kubeadm, kubectl, cri-tools]
         update_cache: true
 
     - name: Stop apt from upgrading them by accident
