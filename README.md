@@ -197,3 +197,12 @@ Every push runs `terraform fmt`, `terraform validate` and `ansible-lint`. Workfl
 ## Kubernetes
 
 2-node Kubernetes cluster (kubeadm, v1.35) on AWS, built the CKA way. Terraform makes the servers, Ansible prepares them, `kubeadm init` and `join` by hand. Steps: [kubernetes/README.md](kubernetes/README.md)
+
+## Cost check
+
+One command to see if anything in AWS is still costing money, in every region: servers, disks, Elastic IPs, NAT gateways, load balancers, databases, S3. Script: [scripts/aws-check.sh](scripts/aws-check.sh)
+
+    aws login
+    ./scripts/aws-check.sh
+
+Prints `ALL CLEAR` or lists what's still running. If the login has expired, it says so instead of saying all clear. Run it after every `terraform destroy`.
