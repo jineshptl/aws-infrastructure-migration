@@ -193,3 +193,7 @@ Broke things on purpose, then found and fixed them. Notes in [confluence/](confl
 ## CI
 
 Every push runs `terraform fmt`, `terraform validate` and `ansible-lint`. Workflow: [.github/workflows/ci.yml](.github/workflows/ci.yml)
+
+## Kubernetes
+
+2-node Kubernetes cluster (kubeadm, v1.35) on AWS, built the CKA way. Terraform makes the servers, Ansible prepares them, `kubeadm init` and `join` by hand. Steps: [kubernetes/README.md](kubernetes/README.md)
