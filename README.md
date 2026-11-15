@@ -197,3 +197,5 @@ Every push runs `terraform fmt`, `terraform validate` and `ansible-lint`. Workfl
 ## Kubernetes
 
 2-node Kubernetes cluster (kubeadm, v1.35) on AWS, built the CKA way. Terraform makes the servers, Ansible prepares them, `kubeadm init` and `join` by hand. Steps: [kubernetes/README.md](kubernetes/README.md)
+
+CI also checks the Kubernetes lab, lints `scripts/` with shellcheck, and scans the whole history for leaked secrets with gitleaks.

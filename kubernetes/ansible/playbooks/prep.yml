@@ -37,10 +37,12 @@
 
     - name: Write containerd config with systemd cgroups
       ansible.builtin.shell: |
+        set -o pipefail
         mkdir -p /etc/containerd
         containerd config default | sed 's/SystemdCgroup = false/SystemdCgroup = true/' > /etc/containerd/config.toml
       args:
         creates: /etc/containerd/config.toml
+        executable: /bin/bash
       notify: Restart containerd
 
     - name: Add Kubernetes apt key
