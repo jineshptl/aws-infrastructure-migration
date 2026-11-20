@@ -10,4 +10,4 @@ keyed_groups:
   - key: ec2_tags.Role
     separator: ""
 hostnames:
-  - ip-address
+  - instance-id
