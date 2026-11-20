@@ -196,13 +196,14 @@ Every push and PR checks Terraform, Ansible, shell scripts and secrets. Main onl
 
 ## Kubernetes
 
-2-node cluster (kubeadm, v1.35), built fully by Ansible over SSM. Config: [kubernetes/](kubernetes/)
+2-node cluster (kubeadm, v1.35) with Cilium (eBPF, no kube-proxy) and BGP to an FRR router. Built fully by Ansible over SSM. Config: [kubernetes/](kubernetes/)
 
     cd kubernetes/terraform
     terraform apply
     cd ../ansible
     ansible-playbook playbooks/prep.yml
     ansible-playbook playbooks/cluster.yml
+    ansible-playbook playbooks/bgp.yml
 
 Full steps: [kubernetes/README.md](kubernetes/README.md)
 
