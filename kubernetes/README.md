@@ -22,6 +22,7 @@ Add to `~/.ssh/config`:
     cd ../ansible
     ansible-playbook playbooks/prep.yml
     ansible-playbook playbooks/cluster.yml
+    ansible-playbook playbooks/bgp.yml
 
 ## Tear down
 

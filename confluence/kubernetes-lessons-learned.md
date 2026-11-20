@@ -42,3 +42,10 @@
 
 - If I fix something by hand twice, it goes into Ansible.
 - Check that the file really changed before rebuilding.
+
+## Breaking BGP on purpose
+
+- **What happened:** I broke BGP 5 ways: router stopped, port blocked, wrong ASN, app scaled to 0, IP pool deleted.
+- **What I learned:** the curl error points to the problem. `rc=28` means network or BGP. `rc=7` means the app.
+- **What I learned:** BGP is slow. It took about 90 seconds to notice the block, and more than 20 seconds to come back.
+- **Next time:** fix drift by running `bgp.yml` again, not by hand.

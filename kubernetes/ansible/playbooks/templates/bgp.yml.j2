@@ -1,0 +1,88 @@
+# IPs that LoadBalancer Services get
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: lab-pool
+spec:
+  blocks:
+    - cidr: 10.200.0.0/24
+---
+# Every node peers with the FRR router
+apiVersion: cilium.io/v2
+kind: CiliumBGPClusterConfig
+metadata:
+  name: lab
+spec:
+  nodeSelector:
+    matchLabels:
+      bgp: "on"
+  bgpInstances:
+    - name: lab
+      localASN: 65001
+      peers:
+        - name: frr
+          peerASN: 65000
+          peerAddress: {{ hostvars[groups['router'][0]]['ansible_facts']['default_ipv4']['address'] }}
+          peerConfigRef:
+            name: frr
+---
+apiVersion: cilium.io/v2
+kind: CiliumBGPPeerConfig
+metadata:
+  name: frr
+spec:
+  families:
+    - afi: ipv4
+      safi: unicast
+      advertisements:
+        matchLabels:
+          advertise: bgp
+---
+# Advertise LoadBalancer IPs to the router
+apiVersion: cilium.io/v2
+kind: CiliumBGPAdvertisement
+metadata:
+  name: lb-ips
+  labels:
+    advertise: bgp
+spec:
+  advertisements:
+    - advertisementType: Service
+      service:
+        addresses:
+          - LoadBalancerIP
+      selector:
+        matchExpressions:
+          - key: bgp
+            operator: NotIn
+            values: ["off"]
+---
+# Test app
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  selector:
+    app: web
+  ports:
+    - port: 80

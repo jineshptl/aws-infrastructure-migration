@@ -1,5 +1,5 @@
 - name: Prepare Kubernetes nodes
-  hosts: all
+  hosts: control:worker
   become: true
   vars:
     k8s_version: "v1.35"

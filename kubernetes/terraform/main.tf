@@ -7,6 +7,12 @@ data "aws_ami" "ubuntu" {
   }
 }
 
+# All nodes in one subnet so BGP next hops are reachable directly
+data "aws_subnet" "lab" {
+  availability_zone = "us-east-1c"
+  default_for_az    = true
+}
+
 resource "aws_key_pair" "lab" {
   key_name   = "k8s-lab"
   public_key = file(var.public_key_path)
@@ -45,6 +51,8 @@ resource "aws_instance" "control" {
   key_name               = aws_key_pair.lab.key_name
   iam_instance_profile   = aws_iam_instance_profile.k8s.name
   vpc_security_group_ids = [aws_security_group.k8s.id]
+  subnet_id              = data.aws_subnet.lab.id
+  source_dest_check      = false
   root_block_device { volume_size = 20 }
   tags = { Name = "k8s-control", Role = "control" }
 }
@@ -56,6 +64,8 @@ resource "aws_instance" "worker" {
   key_name               = aws_key_pair.lab.key_name
   iam_instance_profile   = aws_iam_instance_profile.k8s.name
   vpc_security_group_ids = [aws_security_group.k8s.id]
+  subnet_id              = data.aws_subnet.lab.id
+  source_dest_check      = false
   root_block_device { volume_size = 20 }
   tags = { Name = "k8s-worker-${count.index + 1}", Role = "worker" }
 }
