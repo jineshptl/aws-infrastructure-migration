@@ -3,7 +3,7 @@
   become: true
   tasks:
     - name: Run kubeadm init
-      ansible.builtin.command: kubeadm init --pod-network-cidr=10.244.0.0/16
+      ansible.builtin.command: kubeadm init --skip-phases=addon/kube-proxy
       args:
         creates: /etc/kubernetes/admin.conf
 
@@ -15,10 +15,30 @@
       args:
         creates: /home/ubuntu/.kube/config
 
-    - name: Install flannel
-      ansible.builtin.command: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+    - name: Install cilium CLI
+      ansible.builtin.unarchive:
+        src: https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-arm64.tar.gz
+        dest: /usr/local/bin
+        remote_src: true
+        creates: /usr/local/bin/cilium
+
+    - name: Check if Cilium is installed
+      ansible.builtin.command: kubectl -n kube-system get ds cilium
       become: false
+      register: cilium_ds
+      failed_when: false
       changed_when: false
+
+    - name: Install Cilium
+      ansible.builtin.command: >
+        cilium install
+        --set kubeProxyReplacement=true
+        --set k8sServiceHost={{ ansible_default_ipv4.address }}
+        --set k8sServicePort=6443
+        --set bgpControlPlane.enabled=true
+      become: false
+      when: cilium_ds.rc != 0
+      changed_when: true
 
     - name: Get join command
       ansible.builtin.command: kubeadm token create --print-join-command
@@ -33,3 +53,11 @@
       ansible.builtin.command: "{{ hostvars[groups['control'][0]].join.stdout }}"
       args:
         creates: /etc/kubernetes/kubelet.conf
+
+- name: Check Cilium
+  hosts: control
+  become: false
+  tasks:
+    - name: Wait for Cilium
+      ansible.builtin.command: cilium status --wait
+      changed_when: false
