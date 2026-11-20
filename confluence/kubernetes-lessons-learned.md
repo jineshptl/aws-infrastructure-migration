@@ -20,3 +20,9 @@
 ## Rule I took from this
 
 If I fix something by hand twice, it goes into Ansible.
+
+## Automating the cluster build
+
+- `aws login` 400 error: picked "Sign into new session" and didn't press Ctrl+C.
+- Port 22 blocked at work: moved to SSM ([runbook](ssh-blocked-ssm.md)).
+- `RequestExpired`: exported credentials expire, run the `eval` line again.
