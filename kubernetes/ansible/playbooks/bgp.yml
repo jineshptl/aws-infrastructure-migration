@@ -1,0 +1,59 @@
+- name: Set up FRR router
+  hosts: router
+  become: true
+  tasks:
+    - name: Install FRR
+      ansible.builtin.apt:
+        name: frr
+        update_cache: true
+
+    - name: Turn on bgpd
+      ansible.builtin.lineinfile:
+        path: /etc/frr/daemons
+        regexp: "^bgpd="
+        line: bgpd=yes
+      notify: Restart FRR
+
+    - name: FRR config
+      ansible.builtin.copy:
+        dest: /etc/frr/frr.conf
+        content: |
+          frr defaults traditional
+          router bgp 65000
+           bgp router-id {{ ansible_facts['default_ipv4']['address'] }}
+           no bgp ebgp-requires-policy
+           neighbor K8S peer-group
+           neighbor K8S remote-as 65001
+           bgp listen range 172.31.0.0/16 peer-group K8S
+           address-family ipv4 unicast
+            maximum-paths 4
+           exit-address-family
+        owner: frr
+        group: frr
+        mode: "0640"
+      notify: Restart FRR
+
+  handlers:
+    - name: Restart FRR
+      ansible.builtin.service:
+        name: frr
+        state: restarted
+
+- name: Peer Cilium with FRR
+  hosts: control
+  become: false
+  tasks:
+    - name: Label nodes for BGP
+      ansible.builtin.command: kubectl label nodes --all bgp=on --overwrite
+      changed_when: false
+
+    - name: Write BGP config
+      ansible.builtin.template:
+        src: templates/bgp.yml.j2
+        dest: /home/ubuntu/bgp.yml
+        mode: "0644"
+
+    - name: Apply BGP config
+      ansible.builtin.command: kubectl apply -f /home/ubuntu/bgp.yml
+      register: apply
+      changed_when: "'created' in apply.stdout or 'configured' in apply.stdout"

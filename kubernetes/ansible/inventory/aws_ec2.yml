@@ -6,6 +6,7 @@ filters:
   tag:Role:
     - control
     - worker
+    - router
 keyed_groups:
   - key: ec2_tags.Role
     separator: ""
