@@ -43,6 +43,7 @@ resource "aws_instance" "control" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t4g.medium"
   key_name               = aws_key_pair.lab.key_name
+  iam_instance_profile   = aws_iam_instance_profile.k8s.name
   vpc_security_group_ids = [aws_security_group.k8s.id]
   root_block_device { volume_size = 20 }
   tags = { Name = "k8s-control", Role = "control" }
@@ -53,6 +54,7 @@ resource "aws_instance" "worker" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t4g.small"
   key_name               = aws_key_pair.lab.key_name
+  iam_instance_profile   = aws_iam_instance_profile.k8s.name
   vpc_security_group_ids = [aws_security_group.k8s.id]
   root_block_device { volume_size = 20 }
   tags = { Name = "k8s-worker-${count.index + 1}", Role = "worker" }
