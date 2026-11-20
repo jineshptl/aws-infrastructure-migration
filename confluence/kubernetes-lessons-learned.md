@@ -1,28 +1,44 @@
 # Kubernetes lab: lessons learned
 
-**Goal:** a production-style Kubernetes cluster on AWS, built with kubeadm (CKA style), cost near $0.
-**Result:** 2-node cluster on v1.35. Rebuilt from code in about 10 minutes, about $0.06/hour, torn down after every session.
+**Goal:** a real Kubernetes cluster on AWS, built with kubeadm (like the CKA exam), for almost $0.
+**Result:** 2-node cluster on v1.35. I can rebuild it from code in about 10 minutes. It costs about $0.06/hour and I delete it after every session.
 
-## Incident: control plane down after etcd restore
+## Problem: cluster went down after etcd restore
 
-- **Impact:** API server unavailable for about 5 minutes during a restore drill.
-- **Detection:** kubectl refused connections. `crictl ps -a` showed etcd and kube-apiserver in a restart loop.
-- **Root cause:** the restore used etcd tools v3.4 against etcd v3.6.6. etcd crashed reading the old-format data. `crictl logs` showed the panic.
-- **Fix:** restored again with matching etcdutl v3.6.6 into a fresh data dir. Control plane healthy in about 1 minute.
-- **Prevention:** the runbook now checks the etcd image version first ([runbook](etcd-backup-restore.md)).
+- **Impact:** the API server was down for about 5 minutes during a practice restore.
+- **How I found it:** kubectl stopped working. `crictl ps -a` showed etcd and the API server restarting again and again.
+- **Cause:** I used etcd tools v3.4 on etcd v3.6.6. The versions did not match, so etcd crashed. `crictl logs` showed the error.
+- **Fix:** restored again with etcdutl v3.6.6. The cluster was back in about 1 minute.
+- **Next time:** the runbook checks the etcd version first ([runbook](etcd-backup-restore.md)).
 
-## Debug tools missing during the outage
+## Missing tool during the outage
 
-- **What happened:** crictl wasn't installed when kubectl was down, which slowed down debugging.
+- **What happened:** crictl was not installed when kubectl was down. That slowed me down.
 - **Fix:** installed cri-tools.
-- **Prevention:** added cri-tools to the Ansible playbook. Every node has it from now on.
+- **Next time:** cri-tools is now in the Ansible playbook, so every node has it.
 
-## Rule I took from this
+## Work network blocked the build
 
-If I fix something by hand twice, it goes into Ansible.
+- **What happened:** Ansible could not reach the nodes from my work network.
+- **Cause:** the network blocks port 22.
+- **Fix:** moved to SSM, which uses port 443 ([runbook](ssh-blocked-ssm.md)).
+- **Next time:** the nodes don't need SSH from outside anymore.
 
-## Automating the cluster build
+## AWS login ran out during long runs
 
-- `aws login` 400 error: picked "Sign into new session" and didn't press Ctrl+C.
-- Port 22 blocked at work: moved to SSM ([runbook](ssh-blocked-ssm.md)).
-- `RequestExpired`: exported credentials expire, run the `eval` line again.
+- **What happened:** Ansible found no hosts, and a destroy stopped halfway.
+- **Cause:** the AWS login only lasts a short time.
+- **Fix:** logged in again and re-ran ([runbook](credentials-expired.md)).
+- **Next time:** refresh the login before each long step.
+
+## kube-proxy still running after the Cilium switch
+
+- **What happened:** the cluster had both Cilium and kube-proxy running.
+- **Cause:** I pasted the new playbook in the wrong folder, so it was never saved.
+- **Fix:** saved it in the right place and rebuilt ([runbook](cilium-ebpf.md)).
+- **Next time:** check the file with `grep` before rebuilding.
+
+## Rules I took from this
+
+- If I fix something by hand twice, it goes into Ansible.
+- Check that the file really changed before rebuilding.
