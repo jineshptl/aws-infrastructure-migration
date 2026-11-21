@@ -1,13 +1,28 @@
 # Architecture
 
+## 2-server lab
+
 ```mermaid
 flowchart LR
-    laptop[Laptop] --> app01
-    laptop --> monitor01
-    monitor01 -- metrics --> app01
+    me[Laptop] --> app01[app01: Nginx]
+    me --> mon[monitor01: Prometheus + Grafana]
+    mon -- metrics --> app01
 ```
 
-- VPC `10.0.0.0/16`, public subnet `10.0.1.0/24`
-- app01 (t3.micro): Nginx
-- monitor01 (t3.small): Prometheus, Grafana
-- SSH and web ports open to my IP only
+Two servers on AWS. Terraform builds them, Ansible sets them up. Only my IP can reach them.
+
+## Kubernetes lab
+
+```mermaid
+flowchart LR
+    gh[GitHub] -- ArgoCD --> control[control node]
+    control --> w1[worker-1]
+    control --> w2[worker-2]
+    router[FRR router] -- BGP --> control
+    router -- BGP --> w1
+    router -- BGP --> w2
+```
+
+One control node, two workers and a router. Cilium runs the network. BGP sends the app IP (`10.200.0.0`) to the router, so if one worker dies the other one keeps the site up.
+
+ArgoCD deploys whatever is in Git. I reach the servers through SSM, not SSH.
