@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/jineshptl/aws-infrastructure-migration/actions/workflows/ci.yml/badge.svg)
 
-Cloud version of my [Linux Infrastructure Automation Lab](https://github.com/jineshptl/linux-infrastructure-automation-lab). Same two servers, now on AWS with Terraform and Ansible.
+This started as my [Linux lab](https://github.com/jineshptl/linux-infrastructure-automation-lab) moved to AWS. I rebuilt the same two servers with Terraform and Ansible, then added a Kubernetes cluster with Cilium, BGP and ArgoCD.
 
 Architecture: [docs/architecture.md](docs/architecture.md)
 
