@@ -182,11 +182,13 @@ Takes about 10 minutes. Tear down with `terraform destroy` when done.
 
 ## Failure tests
 
-Broke things on purpose, then found and fixed them. Notes in [confluence/](confluence/).
+Broke things on purpose, then found and fixed them. All runbooks: [confluence/](confluence/README.md). A few of them:
 
 - [Nginx down](confluence/nginx-down.md)
 - [Security group rule removed](confluence/security-group-broken.md)
-- [Node Exporter down](confluence/node-exporter-down.md)
+- [Worker node died, site went down](confluence/worker-node-down.md)
+- [Firewall blocks BGP](confluence/bgp-firewall.md)
+- [Someone changed the cluster by hand](confluence/argocd-manual-change.md)
 
 ![Alert firing](docs/screenshots/alert-firing.png)
 
@@ -196,14 +198,12 @@ Every push and PR checks Terraform, Ansible, shell scripts and secrets. Main onl
 
 ## Kubernetes
 
-2-node cluster (kubeadm, v1.35) with Cilium (eBPF, no kube-proxy) and BGP to an FRR router. Built fully by Ansible over SSM. Config: [kubernetes/](kubernetes/)
+Kubernetes cluster (kubeadm, v1.35) with 1 control node, 2 workers and a BGP router. Cilium (eBPF, no kube-proxy), BGP to an FRR router, and ArgoCD for deploys. Built fully by Ansible over SSM. Config: [kubernetes/](kubernetes/)
 
     cd kubernetes/terraform
     terraform apply
     cd ../ansible
-    ansible-playbook playbooks/prep.yml
-    ansible-playbook playbooks/cluster.yml
-    ansible-playbook playbooks/bgp.yml
+    ansible-playbook playbooks/prep.yml playbooks/cluster.yml playbooks/bgp.yml playbooks/argocd.yml
 
 Full steps: [kubernetes/README.md](kubernetes/README.md)
 
