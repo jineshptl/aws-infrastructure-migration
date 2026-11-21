@@ -58,7 +58,7 @@ resource "aws_instance" "control" {
 }
 
 resource "aws_instance" "worker" {
-  count                  = 1
+  count                  = 2
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t4g.small"
   key_name               = aws_key_pair.lab.key_name
