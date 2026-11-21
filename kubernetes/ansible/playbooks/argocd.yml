@@ -1,0 +1,29 @@
+- name: Install ArgoCD
+  hosts: control
+  become: false
+  tasks:
+    - name: Create argocd namespace
+      ansible.builtin.command: kubectl create namespace argocd
+      register: ns
+      changed_when: ns.rc == 0
+      failed_when: ns.rc != 0 and 'AlreadyExists' not in ns.stderr
+
+    - name: Install ArgoCD
+      ansible.builtin.command: >
+        kubectl apply --server-side -n argocd
+        -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      changed_when: false
+
+    - name: Wait for ArgoCD
+      ansible.builtin.command: kubectl -n argocd rollout status deploy/argocd-server --timeout=300s
+      changed_when: false
+
+    - name: Copy web app
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../argocd/web-app.yml"
+        dest: /home/ubuntu/web-app.yml
+        mode: "0644"
+
+    - name: Add web app to ArgoCD
+      ansible.builtin.command: kubectl apply -f /home/ubuntu/web-app.yml
+      changed_when: false
