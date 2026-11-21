@@ -180,6 +180,17 @@ ansible-playbook playbooks/monitoring.yml
 
 Takes about 10 minutes. Tear down with `terraform destroy` when done.
 
+## Kubernetes
+
+Kubernetes cluster (kubeadm, v1.35) with 1 control node, 2 workers and a BGP router. Cilium (eBPF, no kube-proxy), BGP to an FRR router, and ArgoCD for deploys. Built fully by Ansible over SSM. Config: [kubernetes/](kubernetes/)
+
+    cd kubernetes/terraform
+    terraform apply
+    cd ../ansible
+    ansible-playbook playbooks/prep.yml playbooks/cluster.yml playbooks/bgp.yml playbooks/argocd.yml
+
+Full steps: [kubernetes/README.md](kubernetes/README.md)
+
 ## Failure tests
 
 Broke things on purpose, then found and fixed them. All runbooks: [confluence/](confluence/README.md). A few of them:
@@ -195,17 +206,6 @@ Broke things on purpose, then found and fixed them. All runbooks: [confluence/](
 ## CI
 
 Every push and PR checks Terraform, Ansible, shell scripts and secrets. Main only changes if all pass. Config: [.github/workflows/ci.yml](.github/workflows/ci.yml)
-
-## Kubernetes
-
-Kubernetes cluster (kubeadm, v1.35) with 1 control node, 2 workers and a BGP router. Cilium (eBPF, no kube-proxy), BGP to an FRR router, and ArgoCD for deploys. Built fully by Ansible over SSM. Config: [kubernetes/](kubernetes/)
-
-    cd kubernetes/terraform
-    terraform apply
-    cd ../ansible
-    ansible-playbook playbooks/prep.yml playbooks/cluster.yml playbooks/bgp.yml playbooks/argocd.yml
-
-Full steps: [kubernetes/README.md](kubernetes/README.md)
 
 ## Cost check
 
